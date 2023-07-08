@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(CharacterAnimationController))]
 public class CharacterController : MonoBehaviour
 {
     public float Speed = 5f;
@@ -9,10 +10,12 @@ public class CharacterController : MonoBehaviour
     private Vector3 moveDelta;
     private RaycastHit2D hit;
     private Vector3 initialScale;
-
+    private CharacterAnimationController characterAnimationController;
+    
     private void Start()
     {
         boxCollider = GetComponent<BoxCollider2D>();
+        characterAnimationController = GetComponent<CharacterAnimationController>();
         initialScale = transform.localScale;
     }
 
@@ -20,6 +23,7 @@ public class CharacterController : MonoBehaviour
     {
         if (!IsPlayer)
         {
+            characterAnimationController.SetIsMove(false);
             //AI logic
         }
     }
@@ -42,11 +46,16 @@ public class CharacterController : MonoBehaviour
 
                 //transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
         */
-        if (moveDelta.x > 0)
-            transform.localScale = initialScale;
-        else if (moveDelta.x < 0)
-            transform.localScale = new Vector3(-initialScale.x, initialScale.y, initialScale.z);
-        
+
+        if (moveDelta.magnitude == 0)
+        {
+            characterAnimationController.SetIsMove(false);
+        }
+        else
+        {
+            characterAnimationController.Move(moveDelta.normalized.x, moveDelta.normalized.y);
+            characterAnimationController.SetIsMove(true);
+        }
         // make sure that we can move in this directon by casting a box there first if the box returns null we are free to move
         hit = Physics2D.BoxCast(transform.position, boxCollider.size, 0, new Vector2(0, moveDelta.y),
             Mathf.Abs(moveDelta.y * Time.deltaTime), LayerMask.GetMask("Actor", "Blocking"));
