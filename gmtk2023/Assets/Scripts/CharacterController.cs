@@ -16,19 +16,16 @@ public class CharacterController : MonoBehaviour
     private BoxCollider2D boxCollider;
     private Vector3 moveDelta;
     private RaycastHit2D hit;
-    private Vector3 initialScale;
     private CharacterAnimationController characterAnimationController;
     private WaitForSeconds bodySwapCooldownDelay;
     private Coroutine attackCooldownCoroutine;
     private bool isDie = false;
-    
+
     private void Start()
     {
         boxCollider = GetComponent<BoxCollider2D>();
         characterAnimationController = GetComponent<CharacterAnimationController>();
-        initialScale = transform.localScale;
         bodySwapCooldownDelay = new WaitForSeconds(AttackCooldown);
-
     }
 
     private void Update()
@@ -45,7 +42,7 @@ public class CharacterController : MonoBehaviour
     public void Move(bool spaceInput, bool mouseInput)
     {
         if (isDie) return;
-        
+
         float x = Input.GetAxisRaw("Horizontal");
         float y = Input.GetAxisRaw("Vertical");
 
@@ -126,7 +123,7 @@ public class CharacterController : MonoBehaviour
             }
         }
     }
-    
+
     private IEnumerator AttackDelay()
     {
         yield return bodySwapCooldownDelay;
@@ -137,14 +134,14 @@ public class CharacterController : MonoBehaviour
     {
         HP -= damage;
         Debug.Log("DAMAGE");
-
+        characterAnimationController.SetHurt();
+        
         if (HP <= 0)
         {
             isDie = true;
             EventManager.instance.OnPlayerDie?.Invoke();
             Debug.Log("DIE");
             GetComponent<SpriteRenderer>().DOFade(0, 0.5f).OnComplete(() => Destroy(gameObject));
-            //die
         }
     }
 }
