@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: LonGair
+  m_Controller: {fileID: 9100000, guid: ea234225256dcd246beb5a736a49bd8f, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 207b7a8e7ca9be048a615277ba3613f2, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: e0787c598fa99874693db401c44acaed, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 1e04fa6adfe80e94da0229a18eb7b331, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: ee6cf7e6bd60ee847a50fa1847f51b80, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 5faf26c673716f840aac2f6ba181a6c3, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 701b3aeda906a454aaea2faea83904ae, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: c0e1040ae53221942879879ae74709a1, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 6c4a6c3b526303c4eaad94101169ab33, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: f7922e62584f1d7469cd173e4b9c20c0, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 53ad44ab47a2f8c40b882a6a03e31bab, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 84e1bcc760bed8c4fa3f7a48dcb12981, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 9f245e3e912aa384fb22c24500482445, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 6592f3ed6a1d48d4ab1127c97386142f, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 944d5e6894e0b354ab13272319c11b5c, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 059a481febe6e664dbdab07d63cc8ec3, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 66081db4780cebd4ea88f406f1fa2447, type: 2}
