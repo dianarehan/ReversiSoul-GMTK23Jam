@@ -6,7 +6,6 @@ using UnityEngine;
 public class PlayerManager : MonoBehaviour
 {
     //  public CinemachineVirtualCamera virtualCamera;
-
     //  private CinemachineBasicMultiChannelPerlin noise;
     public float BodySwapCooldown = 2;
     private bool canBodySwap = true;
@@ -29,6 +28,7 @@ public class PlayerManager : MonoBehaviour
     {
         EventManager.instance.OnCollision += OnCollision;
         //   noise = virtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+        bodySwapCooldownDelay = new WaitForSeconds(BodySwapCooldown);
         shakeScreenLength = new WaitForSeconds(1);
     }
 
