@@ -1467,7 +1467,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5794285eda30e0446aa908e24f59970e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BodySwapCooldown: 2
+  BodySwapCooldown: 0.5
   startCharacter: {fileID: 929538289}
 --- !u!114 &1396299632
 MonoBehaviour:
