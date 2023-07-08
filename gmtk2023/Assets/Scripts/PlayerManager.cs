@@ -13,7 +13,9 @@ public class PlayerManager : MonoBehaviour
 
     private WaitForSeconds bodySwapCooldownDelay;
     private Coroutine bodySwapCooldownCoroutine;
-
+    private bool spaceInput = false;
+    private bool mouseInput = false;
+    
     private void Awake()
     {
         currentCharacter = startCharacter;
@@ -67,9 +69,12 @@ public class PlayerManager : MonoBehaviour
 
     private void Update()
     {
+        spaceInput = Input.GetKeyDown(KeyCode.Space);
+        mouseInput = Input.GetKeyDown(KeyCode.Mouse0);
+        
         if (currentCharacter != null)
         {
-            currentCharacter.Move();
+            currentCharacter.Move(spaceInput, mouseInput);
         }
     }
 
