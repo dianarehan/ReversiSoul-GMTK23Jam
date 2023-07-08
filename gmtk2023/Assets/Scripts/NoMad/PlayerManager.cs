@@ -1,20 +1,15 @@
-using System;
 using System.Collections;
 using Cinemachine;
 using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
-    //  public CinemachineVirtualCamera virtualCamera;
-    //  private CinemachineBasicMultiChannelPerlin noise;
+    public CinemachineVirtualCamera virtualCamera;
     public float BodySwapCooldown = 2;
     private bool canBodySwap = true;
 
     public CharacterController startCharacter;
     private CharacterController currentCharacter;
-
-    private WaitForSeconds shakeScreenLength;
-    private Coroutine shakeScreenCoroutine;
 
     private WaitForSeconds bodySwapCooldownDelay;
     private Coroutine bodySwapCooldownCoroutine;
@@ -27,9 +22,7 @@ public class PlayerManager : MonoBehaviour
     private void Start()
     {
         EventManager.instance.OnCollision += OnCollision;
-        //   noise = virtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
         bodySwapCooldownDelay = new WaitForSeconds(BodySwapCooldown);
-        shakeScreenLength = new WaitForSeconds(1);
     }
 
     private void OnCollision(CharacterController first, CharacterController second)
@@ -67,14 +60,8 @@ public class PlayerManager : MonoBehaviour
         }
 
         bodySwapCooldownCoroutine = StartCoroutine(BodySwap());
-
-        if (shakeScreenCoroutine != null)
-        {
-            StopCoroutine(shakeScreenCoroutine);
-        }
-
-        //    shakeScreenCoroutine = StartCoroutine(ShakeScreen());
-        //    virtualCamera.Follow = currentCharacter.transform;
+        
+        virtualCamera.Follow = currentCharacter.transform;
         //Do smth on change
     }
 
@@ -91,11 +78,4 @@ public class PlayerManager : MonoBehaviour
         yield return bodySwapCooldownDelay;
         canBodySwap = true;
     }
-
-    //  private IEnumerator ShakeScreen()
-//  {
-//  noise.m_AmplitudeGain = 1;
-//   yield return shakeScreenLength;
-//   noise.m_AmplitudeGain = 0;
-//  }
 }
