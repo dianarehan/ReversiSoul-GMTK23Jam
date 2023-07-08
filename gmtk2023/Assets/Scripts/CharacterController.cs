@@ -1,4 +1,5 @@
 using System.Collections;
+using DG.Tweening;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterAnimationController))]
@@ -19,6 +20,7 @@ public class CharacterController : MonoBehaviour
     private CharacterAnimationController characterAnimationController;
     private WaitForSeconds bodySwapCooldownDelay;
     private Coroutine attackCooldownCoroutine;
+    private bool isDie = false;
     
     private void Start()
     {
@@ -31,6 +33,8 @@ public class CharacterController : MonoBehaviour
 
     private void Update()
     {
+        if (isDie) return;
+
         if (!IsPlayer)
         {
             characterAnimationController.SetIsMove(false);
@@ -40,6 +44,8 @@ public class CharacterController : MonoBehaviour
 
     public void Move(bool spaceInput, bool mouseInput)
     {
+        if (isDie) return;
+        
         float x = Input.GetAxisRaw("Horizontal");
         float y = Input.GetAxisRaw("Vertical");
 
@@ -134,7 +140,10 @@ public class CharacterController : MonoBehaviour
 
         if (HP <= 0)
         {
+            isDie = true;
+            EventManager.instance.OnPlayerDie?.Invoke();
             Debug.Log("DIE");
+            GetComponent<SpriteRenderer>().DOFade(0, 0.5f).OnComplete(() => Destroy(gameObject));
             //die
         }
     }
