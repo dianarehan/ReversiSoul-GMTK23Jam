@@ -89,54 +89,57 @@ public class CharacterController : MonoBehaviour
 
     private void Collision(Collision2D collision)
     {
-        if (collision.gameObject.GetComponent<CharacterController>() != null)
+        var character = collision.gameObject.GetComponent<CharacterController>();
+        if (character == null) return;
+
+        HandleBoxCastOnYAxis();
+        HandleBoxCastOnXAxis();
+    }
+
+    private void HandleBoxCastOnYAxis()
+    {
+        hit = CreateBoxCast(new Vector2(0, moveDelta.y), Mathf.Abs(moveDelta.y * Time.deltaTime), "Actor", "Blocking");
+        HandleCollision();
+    }
+
+    private void HandleBoxCastOnXAxis()
+    {
+        hit = CreateBoxCast(new Vector2(moveDelta.x, 0), Mathf.Abs(moveDelta.x * Time.deltaTime), "Actor", "Blocking");
+        HandleCollision();
+    }
+
+    private RaycastHit2D CreateBoxCast(Vector2 direction, float distance, params string[] layers)
+    {
+        var layerMask = LayerMask.GetMask(layers);
+        return Physics2D.BoxCast(transform.position, boxCollider.size, 0, direction, distance, layerMask);
+    }
+
+    private void HandleCollision()
+    {
+        var collidedCharacter = hit.collider?.gameObject.GetComponent<CharacterController>();
+        if (collidedCharacter == null) return;
+
+        if (IsPlayer && spaceInput)
         {
-            hit = Physics2D.BoxCast(transform.position, boxCollider.size, 0, new Vector2(0, moveDelta.y),
-                Mathf.Abs(moveDelta.y * Time.deltaTime), LayerMask.GetMask("Actor", "Blocking"));
-
-            if ((hit.collider != null ? hit.collider.gameObject.GetComponent<CharacterController>() : null) != null)
-            {
-                if (IsPlayer && spaceInput)
-                    EventManager.instance.OnCollision?.Invoke(this,
-                        hit.collider.gameObject.GetComponent<CharacterController>());
-                else if (!(IsPlayer && spaceInput) &&
-                         ((IsPlayer && mouseInput && canAttack) ||
-                         (canAttack && hit.collider.gameObject.GetComponent<CharacterController>().IsPlayer)))
-                {
-                    hit.collider.gameObject.GetComponent<CharacterController>().ReceiveDamage(Damage);
-                    canAttack = false;
-
-                    if (attackCooldownCoroutine != null)
-                    {
-                        StopCoroutine(AttackDelay());
-                    }
-
-                    attackCooldownCoroutine = StartCoroutine(AttackDelay());
-                }
-            }
-
-
-            hit = Physics2D.BoxCast(transform.position, boxCollider.size, 0, new Vector2(moveDelta.x, 0),
-                Mathf.Abs(moveDelta.x * Time.deltaTime), LayerMask.GetMask("Actor", "Blocking"));
-            if ((hit.collider != null ? hit.collider.gameObject.GetComponent<CharacterController>() : null) != null)
-            {
-                if (IsPlayer && spaceInput)
-                    EventManager.instance.OnCollision?.Invoke(this,
-                        hit.collider.gameObject.GetComponent<CharacterController>());
-                else if ((IsPlayer && mouseInput && canAttack) ||
-                         (canAttack && hit.collider.gameObject.GetComponent<CharacterController>().IsPlayer))
-                {
-                    hit.collider.gameObject.GetComponent<CharacterController>().ReceiveDamage(Damage);
-                    canAttack = false;
-                    if (attackCooldownCoroutine != null)
-                    {
-                        StopCoroutine(AttackDelay());
-                    }
-
-                    attackCooldownCoroutine = StartCoroutine(AttackDelay());
-                }
-            }
+            EventManager.instance.OnCollision?.Invoke(this, collidedCharacter);
         }
+        else if (canAttack && (IsPlayer && mouseInput || collidedCharacter.IsPlayer))
+        {
+            ApplyDamageTo(collidedCharacter);
+        }
+    }
+
+    private void ApplyDamageTo(CharacterController target)
+    {
+        target.ReceiveDamage(Damage);
+        canAttack = false;
+
+        if (attackCooldownCoroutine != null)
+        {
+            StopCoroutine(AttackDelay());
+        }
+
+        attackCooldownCoroutine = StartCoroutine(AttackDelay());
     }
 
     private IEnumerator AttackDelay()
