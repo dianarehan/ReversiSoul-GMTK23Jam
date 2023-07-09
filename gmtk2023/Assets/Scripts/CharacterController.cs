@@ -14,7 +14,7 @@ public class CharacterController : MonoBehaviour
     public bool IsPlayer;
 
     public Action OnDie;
-    
+
     private float distanceToPlayer;
     private bool canAttack = true;
     private BoxCollider2D boxCollider;
@@ -91,6 +91,7 @@ public class CharacterController : MonoBehaviour
 
     private void Collision(Collision2D collision)
     {
+        if (isDie) return;
         var character = collision.gameObject.GetComponent<CharacterController>();
         if (character == null) return;
 
@@ -133,6 +134,7 @@ public class CharacterController : MonoBehaviour
 
     private void ApplyDamageTo(CharacterController target)
     {
+        if (isDie) return;
         target.ReceiveDamage(Damage);
         canAttack = false;
 
@@ -160,7 +162,11 @@ public class CharacterController : MonoBehaviour
             isDie = true;
             OnDie?.Invoke();
             EventManager.instance.OnPlayerDie?.Invoke(this);
-            GetComponent<SpriteRenderer>().DOFade(0, 0.5f).OnComplete(() => Destroy(gameObject));
+            GetComponent<SpriteRenderer>().DOFade(0, 0.5f).OnComplete(() =>
+            {
+                if (!IsPlayer)
+                    Destroy(gameObject);
+            });
         }
     }
 }
