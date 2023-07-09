@@ -122,13 +122,13 @@ public class CharacterController : MonoBehaviour
 
     private void HandleBoxCastOnYAxis()
     {
-        hit = CreateBoxCast(new Vector2(0, moveDelta.y), Mathf.Abs(moveDelta.y * Time.deltaTime), "Actor");
+        hit = CreateBoxCast(new Vector2(0, moveDelta.y), Mathf.Abs(moveDelta.y / 5 * Time.deltaTime), "Actor");
         HandleCollision();
     }
 
     private void HandleBoxCastOnXAxis()
     {
-        hit = CreateBoxCast(new Vector2(moveDelta.x, 0), Mathf.Abs(moveDelta.x * Time.deltaTime), "Actor");
+        hit = CreateBoxCast(new Vector2(moveDelta.x, 0), Mathf.Abs(moveDelta.x / 5* Time.deltaTime), "Actor");
         HandleCollision();
     }
 

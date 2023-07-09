@@ -9,4 +9,10 @@ public class LevelValues : MonoBehaviour
     {
         DontDestroyOnLoad(this);
     }
+
+    public void Reset()
+    {
+        targetKills = 10;
+        targetSpawner = 5;
+    }
 }

@@ -32,6 +32,7 @@ public class GameController : MonoBehaviour
 
     public void LoadMenu()
     {
+        levelValues.Reset();
         SceneManager.LoadScene("MainMenu");
     }
     
