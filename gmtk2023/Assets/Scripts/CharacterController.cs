@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using DG.Tweening;
 using UnityEngine;
@@ -12,18 +13,23 @@ public class CharacterController : MonoBehaviour
 
     public bool IsPlayer;
 
+    private float distanceToPlayer;
     private bool canAttack = true;
     private BoxCollider2D boxCollider;
-    private Vector3 moveDelta;
     private RaycastHit2D hit;
+    private Vector3 moveDelta;
+    private Rigidbody2D rigidbody;
     private CharacterAnimationController characterAnimationController;
     private WaitForSeconds bodySwapCooldownDelay;
     private Coroutine attackCooldownCoroutine;
-    private bool isDie = false;
+    private bool isDie;
+    private bool spaceInput;
+    private bool mouseInput;
 
     private void Start()
     {
         boxCollider = GetComponent<BoxCollider2D>();
+        rigidbody = GetComponent<Rigidbody2D>();
         characterAnimationController = GetComponent<CharacterAnimationController>();
         bodySwapCooldownDelay = new WaitForSeconds(AttackCooldown);
     }
@@ -32,94 +38,103 @@ public class CharacterController : MonoBehaviour
     {
         if (isDie) return;
 
-        if (!IsPlayer)
-        {
-            characterAnimationController.SetIsMove(false);
-            //AI logic
-        }
+        spaceInput = Input.GetKey(KeyCode.Space);
+        mouseInput = Input.GetKey(KeyCode.Mouse0);
     }
 
-    public void Move(bool spaceInput, bool mouseInput)
+    private void FixedUpdate()
     {
         if (isDie) return;
 
-        float x = Input.GetAxisRaw("Horizontal");
-        float y = Input.GetAxisRaw("Vertical");
+        if (!IsPlayer)
+        {
+            var playerPos = PlayerManager.instance.currentCharacter.transform.position;
+            var position = transform.position;
+            distanceToPlayer = Vector2.Distance(position, playerPos);
+            Vector2 direction = playerPos - position;
+            direction.Normalize();
+            Move(direction.x, direction.y);
+        }
+    }
 
-        moveDelta = new Vector3(x, y, 0);
+    public void Move(float x, float y)
+    {
+        if (isDie) return;
+
+        moveDelta = new Vector2(x, y);
         moveDelta *= Speed;
-
-        /*
-                //swap sprite direction (flip)
-                if (moveDelta.x > 0)
-                    transform.localScale = Vector3.one;
-                // transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, transform.localScale.z);
-                else if (moveDelta.x < 0)
-                    transform.localScale = new Vector3(-1, 1, 1);
-
-                //transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
-        */
 
         if (moveDelta.magnitude == 0)
         {
+            rigidbody.velocity = Vector2.zero;
             characterAnimationController.SetIsMove(false);
         }
         else
         {
+            rigidbody.velocity = moveDelta * Time.deltaTime;
             characterAnimationController.Move(moveDelta.normalized.x, moveDelta.normalized.y);
             characterAnimationController.SetIsMove(true);
         }
+    }
 
-        // make sure that we can move in this directon by casting a box there first if the box returns null we are free to move
-        hit = Physics2D.BoxCast(transform.position, boxCollider.size, 0, new Vector2(0, moveDelta.y),
-            Mathf.Abs(moveDelta.y * Time.deltaTime), LayerMask.GetMask("Actor", "Blocking"));
-        if (hit.collider == null)
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        Collision(collision);
+    }
+
+    private void OnCollisionEnter2D(Collision2D col)
+    {
+        Collision(col);
+    }
+
+    private void Collision(Collision2D collision)
+    {
+        if (collision.gameObject.GetComponent<CharacterController>() != null)
         {
-            //Make this thing move
-            transform.Translate(0, moveDelta.y * Time.deltaTime, 0);
-        }
-        else if (hit.collider.gameObject.GetComponent<CharacterController>() != null)
-        {
-            if (IsPlayer && spaceInput)
-                EventManager.instance.OnCollision?.Invoke(this,
-                    hit.collider.gameObject.GetComponent<CharacterController>());
-            else if (mouseInput && canAttack)
+            hit = Physics2D.BoxCast(transform.position, boxCollider.size, 0, new Vector2(0, moveDelta.y),
+                Mathf.Abs(moveDelta.y * Time.deltaTime), LayerMask.GetMask("Actor", "Blocking"));
+
+            if ((hit.collider != null ? hit.collider.gameObject.GetComponent<CharacterController>() : null) != null)
             {
-                hit.collider.gameObject.GetComponent<CharacterController>().ReceiveDamage(Damage);
-                canAttack = false;
-
-                if (attackCooldownCoroutine != null)
+                if (IsPlayer && spaceInput)
+                    EventManager.instance.OnCollision?.Invoke(this,
+                        hit.collider.gameObject.GetComponent<CharacterController>());
+                else if (!(IsPlayer && spaceInput) &&
+                         ((IsPlayer && mouseInput && canAttack) ||
+                         (canAttack && hit.collider.gameObject.GetComponent<CharacterController>().IsPlayer)))
                 {
-                    StopCoroutine(AttackDelay());
-                }
+                    hit.collider.gameObject.GetComponent<CharacterController>().ReceiveDamage(Damage);
+                    canAttack = false;
 
-                attackCooldownCoroutine = StartCoroutine(AttackDelay());
+                    if (attackCooldownCoroutine != null)
+                    {
+                        StopCoroutine(AttackDelay());
+                    }
+
+                    attackCooldownCoroutine = StartCoroutine(AttackDelay());
+                }
             }
-        }
 
 
-        hit = Physics2D.BoxCast(transform.position, boxCollider.size, 0, new Vector2(moveDelta.x, 0),
-            Mathf.Abs(moveDelta.x * Time.deltaTime), LayerMask.GetMask("Actor", "Blocking"));
-        if (hit.collider == null)
-        {
-            //Make this thing move
-            transform.Translate(moveDelta.x * Time.deltaTime, 0, 0);
-        }
-        else if (hit.collider.gameObject.GetComponent<CharacterController>() != null)
-        {
-            if (IsPlayer && spaceInput)
-                EventManager.instance.OnCollision?.Invoke(this,
-                    hit.collider.gameObject.GetComponent<CharacterController>());
-            else if (mouseInput && canAttack)
+            hit = Physics2D.BoxCast(transform.position, boxCollider.size, 0, new Vector2(moveDelta.x, 0),
+                Mathf.Abs(moveDelta.x * Time.deltaTime), LayerMask.GetMask("Actor", "Blocking"));
+            if ((hit.collider != null ? hit.collider.gameObject.GetComponent<CharacterController>() : null) != null)
             {
-                hit.collider.gameObject.GetComponent<CharacterController>().ReceiveDamage(Damage);
-                canAttack = false;
-                if (attackCooldownCoroutine != null)
+                if (IsPlayer && spaceInput)
+                    EventManager.instance.OnCollision?.Invoke(this,
+                        hit.collider.gameObject.GetComponent<CharacterController>());
+                else if ((IsPlayer && mouseInput && canAttack) ||
+                         (canAttack && hit.collider.gameObject.GetComponent<CharacterController>().IsPlayer))
                 {
-                    StopCoroutine(AttackDelay());
-                }
+                    hit.collider.gameObject.GetComponent<CharacterController>().ReceiveDamage(Damage);
+                    canAttack = false;
+                    if (attackCooldownCoroutine != null)
+                    {
+                        StopCoroutine(AttackDelay());
+                    }
 
-                attackCooldownCoroutine = StartCoroutine(AttackDelay());
+                    attackCooldownCoroutine = StartCoroutine(AttackDelay());
+                }
             }
         }
     }
@@ -133,14 +148,12 @@ public class CharacterController : MonoBehaviour
     public void ReceiveDamage(float damage)
     {
         HP -= damage;
-        Debug.Log("DAMAGE");
         characterAnimationController.SetHurt();
-        
+
         if (HP <= 0)
         {
             isDie = true;
             EventManager.instance.OnPlayerDie?.Invoke();
-            Debug.Log("DIE");
             GetComponent<SpriteRenderer>().DOFade(0, 0.5f).OnComplete(() => Destroy(gameObject));
         }
     }
