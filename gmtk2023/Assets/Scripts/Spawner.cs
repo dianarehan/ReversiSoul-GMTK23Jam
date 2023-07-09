@@ -21,6 +21,7 @@ public class Spawner : MonoBehaviour
 
     private void OnCharacterDie()
     {
+        currentSpawnedCount--;
         InstantiateCharacter();
     }
 
