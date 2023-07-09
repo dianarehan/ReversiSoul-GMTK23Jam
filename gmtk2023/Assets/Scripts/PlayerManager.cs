@@ -32,6 +32,7 @@ public class PlayerManager : MonoBehaviour
         
         currentCharacter = startCharacter;
         currentCharacter.Speed *= 1.5f;
+        currentCharacter.HP += 10;
         currentCharacter.GetComponent<Rigidbody2D>().mass = 10;
     }
 
@@ -69,12 +70,14 @@ public class PlayerManager : MonoBehaviour
     private void TryChangeTarget(CharacterController newTarget)
     {
         currentCharacter.Speed /= 1.5f;
+        currentCharacter.HP = Mathf.Min(1, currentCharacter.HP - 10);
         currentCharacter.GetComponent<Rigidbody2D>().mass = 1;
 
 
         currentCharacter = newTarget;
         
         currentCharacter.Speed *= 1.5f;
+        currentCharacter.HP += 10;
         currentCharacter.GetComponent<Rigidbody2D>().mass = 10;
 
 

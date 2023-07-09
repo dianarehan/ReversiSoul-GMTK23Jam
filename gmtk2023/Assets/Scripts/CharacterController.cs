@@ -13,6 +13,8 @@ public class CharacterController : MonoBehaviour
 
     public bool IsPlayer;
 
+    public Action OnDie;
+    
     private float distanceToPlayer;
     private bool canAttack = true;
     private BoxCollider2D boxCollider;
@@ -156,7 +158,8 @@ public class CharacterController : MonoBehaviour
         if (HP <= 0)
         {
             isDie = true;
-            EventManager.instance.OnPlayerDie?.Invoke();
+            OnDie?.Invoke();
+            EventManager.instance.OnPlayerDie?.Invoke(this);
             GetComponent<SpriteRenderer>().DOFade(0, 0.5f).OnComplete(() => Destroy(gameObject));
         }
     }
