@@ -7,12 +7,12 @@ using UnityEngine;
 public class CharacterController : MonoBehaviour
 {
     public float Speed = 5f;
-    public float AttackCooldown = 0.5f;
     public float HP = 4;
     public float Damage = 1;
     public AudioClip attackClip;
     public AudioClip hurtClip;
-    
+    private float attackCooldown = 0.5f;
+
     public bool IsPlayer;
 
     public Action OnDie;
@@ -40,7 +40,7 @@ public class CharacterController : MonoBehaviour
         rigidbody = GetComponent<Rigidbody2D>();
         audioSource = GetComponent<AudioSource>();
         characterAnimationController = GetComponent<CharacterAnimationController>();
-        bodySwapCooldownDelay = new WaitForSeconds(AttackCooldown);
+        bodySwapCooldownDelay = new WaitForSeconds(attackCooldown);
     }
 
     private void Update()
