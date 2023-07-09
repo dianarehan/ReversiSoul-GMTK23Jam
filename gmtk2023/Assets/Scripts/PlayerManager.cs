@@ -73,7 +73,6 @@ public class PlayerManager : MonoBehaviour
         currentCharacter.HP = Mathf.Min(1, currentCharacter.HP - 10);
         currentCharacter.GetComponent<Rigidbody2D>().mass = 1;
 
-
         currentCharacter = newTarget;
         
         currentCharacter.Speed *= 1.5f;

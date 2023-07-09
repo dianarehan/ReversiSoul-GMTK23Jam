@@ -77,13 +77,11 @@ public class CharacterController : MonoBehaviour
 
     public void Move(float x, float y)
     {
-        if (isDie) return;
-
         moveDelta = new Vector2(x, y);
         moveDelta *= Speed;
 
-        
-        if (EventManager.instance.IsGameDone || moveDelta.magnitude == 0)
+
+        if (EventManager.instance.IsGameDone || isDie || moveDelta.magnitude == 0)
         {
             rigidbody.velocity = Vector2.zero;
             characterAnimationController.SetIsMove(false);
@@ -118,13 +116,13 @@ public class CharacterController : MonoBehaviour
 
     private void HandleBoxCastOnYAxis()
     {
-        hit = CreateBoxCast(new Vector2(0, moveDelta.y), Mathf.Abs(moveDelta.y * Time.deltaTime), "Actor", "Blocking");
+        hit = CreateBoxCast(new Vector2(0, moveDelta.y), Mathf.Abs(moveDelta.y * Time.deltaTime), "Actor");
         HandleCollision();
     }
 
     private void HandleBoxCastOnXAxis()
     {
-        hit = CreateBoxCast(new Vector2(moveDelta.x, 0), Mathf.Abs(moveDelta.x * Time.deltaTime), "Actor", "Blocking");
+        hit = CreateBoxCast(new Vector2(moveDelta.x, 0), Mathf.Abs(moveDelta.x * Time.deltaTime), "Actor");
         HandleCollision();
     }
 
@@ -170,7 +168,7 @@ public class CharacterController : MonoBehaviour
         yield return bodySwapCooldownDelay;
         canAttack = true;
     }
-    
+
     private IEnumerator AttackVisualDelay()
     {
         yield return bodySwapCooldownDelay;
@@ -179,6 +177,7 @@ public class CharacterController : MonoBehaviour
 
     public void ReceiveDamage(float damage)
     {
+        if (isDie) return;
         HP -= damage;
         characterAnimationController.SetHurt();
 

@@ -7,6 +7,7 @@ public class Spawner : MonoBehaviour
 {
     public CharacterController characterPrefab;
     public int maxSpawnedCount = 5;
+    private int currentSpawnedCount;
     private List<CharacterController> characters = new();
 
     private IEnumerator Start()
@@ -25,7 +26,11 @@ public class Spawner : MonoBehaviour
 
     private void InstantiateCharacter()
     {
+        if (currentSpawnedCount >= maxSpawnedCount) return;
+        
+        currentSpawnedCount++;
         var character = Instantiate(characterPrefab, transform);
+        character.transform.position = new Vector3(transform.position.x, transform.position.y, 0);
         character.GetComponent<SpriteRenderer>().DOFade(0, 0);
         character.GetComponent<SpriteRenderer>().DOFade(1, 0.5f);
         character.OnDie += OnCharacterDie;
