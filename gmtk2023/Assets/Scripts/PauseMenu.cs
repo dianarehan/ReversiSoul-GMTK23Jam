@@ -9,7 +9,19 @@ public class PauseMenu : MonoBehaviour
     public static bool GameIsPaused = false;
     public GameObject pauseMenuUI;
 
-    // Update is called once per frame
+    private static AudioSource audioSource;
+    private float musicVolume = 1f;
+    private void Start()
+    {
+        audioSource = GetComponent<AudioSource>(); // Get the AudioSource component from the current GameObject
+        audioSource.volume = musicVolume;
+    }
+
+    public void UpdateVolume(float volume)
+    {
+        musicVolume = volume;
+        audioSource.volume = volume; // Update the volume of the AudioSource
+    }
     void Update()
     {
         if (Input.GetKeyUp(KeyCode.Escape))
