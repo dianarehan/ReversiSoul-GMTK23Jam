@@ -20,6 +20,8 @@ public class CharacterController : MonoBehaviour
     private float distanceToPlayer;
     private bool canAttack = true;
     private bool canVisualAttack = true;
+    public bool IsDie;
+
     private BoxCollider2D boxCollider;
     private RaycastHit2D hit;
     private Vector3 moveDelta;
@@ -29,7 +31,6 @@ public class CharacterController : MonoBehaviour
     private WaitForSeconds bodySwapCooldownDelay;
     private Coroutine attackCooldownCoroutine;
     private Coroutine attackVisualCoroutine;
-    private bool isDie;
     private bool spaceInput;
     private bool mouseInput;
 
@@ -44,7 +45,7 @@ public class CharacterController : MonoBehaviour
 
     private void Update()
     {
-        if (isDie || EventManager.instance.IsGameDone) return;
+        if (IsDie || EventManager.instance.IsGameDone) return;
 
         spaceInput = Input.GetKey(KeyCode.Space);
         mouseInput = Input.GetKey(KeyCode.Mouse0);
@@ -67,7 +68,7 @@ public class CharacterController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (isDie || EventManager.instance.IsGameDone) return;
+        if (IsDie || EventManager.instance.IsGameDone) return;
 
         if (!IsPlayer)
         {
@@ -86,7 +87,7 @@ public class CharacterController : MonoBehaviour
         moveDelta *= Speed;
 
 
-        if (EventManager.instance.IsGameDone || isDie || moveDelta.magnitude == 0)
+        if (EventManager.instance.IsGameDone || IsDie || moveDelta.magnitude == 0)
         {
             rigidbody.velocity = Vector2.zero;
             characterAnimationController.SetIsMove(false);
@@ -111,7 +112,7 @@ public class CharacterController : MonoBehaviour
 
     private void Collision(Collision2D collision)
     {
-        if (isDie || EventManager.instance.IsGameDone) return;
+        if (IsDie || EventManager.instance.IsGameDone) return;
         var character = collision.gameObject.GetComponent<CharacterController>();
         if (character == null) return;
 
@@ -142,7 +143,7 @@ public class CharacterController : MonoBehaviour
         var collidedCharacter = hit.collider?.gameObject.GetComponent<CharacterController>();
         if (collidedCharacter == null) return;
 
-        if (IsPlayer && spaceInput)
+        if (IsPlayer && spaceInput && !collidedCharacter.IsDie)
         {
             EventManager.instance.OnCollision?.Invoke(this, collidedCharacter);
         }
@@ -154,7 +155,7 @@ public class CharacterController : MonoBehaviour
 
     private void ApplyDamageTo(CharacterController target)
     {
-        if (isDie) return;
+        if (IsDie) return;
         if (!IsPlayer)
         {
             characterAnimationController.SetAttack();
@@ -186,14 +187,14 @@ public class CharacterController : MonoBehaviour
 
     public void ReceiveDamage(float damage)
     {
-        if (isDie) return;
+        if (IsDie) return;
         audioSource.PlayOneShot(hurtClip);
         HP -= damage;
         characterAnimationController.SetHurt();
 
         if (HP <= 0)
         {
-            isDie = true;
+            IsDie = true;
             OnDie?.Invoke();
             EventManager.instance.OnPlayerDie?.Invoke(this);
             GetComponent<SpriteRenderer>().DOFade(0, 0.5f).OnComplete(() =>
