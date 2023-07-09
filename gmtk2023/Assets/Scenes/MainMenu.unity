@@ -3267,7 +3267,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'No time so have fun '
+  m_text: 'For switching bodies press "space"
+
+    For Attack pres "LMB"'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: def438f9af1fa664a81908f8083194b1, type: 2}
   m_sharedMaterial: {fileID: -4384379939710380175, guid: def438f9af1fa664a81908f8083194b1, type: 2}
