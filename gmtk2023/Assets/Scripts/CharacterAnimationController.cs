@@ -9,16 +9,20 @@ public class CharacterAnimationController : MonoBehaviour
     private readonly string nameMoveY = "MoveY";
     private readonly string nameIsMove = "IsMove";
     private readonly string nameHurt = "Hurt";
+    private readonly string nameAttack = "Attack";
 
     private float hurtLayerOffCooldown = 0.5f;
+    private float attackLayerOffCooldown = 0.5f;
     
-    private WaitForSeconds bodySwapCooldownDelay;
-    private Coroutine bodySwapCooldownCoroutine;
+    private WaitForSeconds hurtCooldownDelay;
+    private Coroutine hurtCooldownCoroutine;
+    
+    private Coroutine attackCooldownCoroutine;
     
     private void Awake()
     {
         animator = GetComponent<Animator>();
-        bodySwapCooldownDelay = new WaitForSeconds(hurtLayerOffCooldown);
+        hurtCooldownDelay = new WaitForSeconds(hurtLayerOffCooldown);
 
     }
 
@@ -35,7 +39,7 @@ public class CharacterAnimationController : MonoBehaviour
 
     public void SetHurt()
     {
-        if (bodySwapCooldownCoroutine != null)
+        if (hurtCooldownCoroutine != null)
         {
             StopCoroutine(SetHurtLayerOff());
         }
@@ -43,13 +47,18 @@ public class CharacterAnimationController : MonoBehaviour
         animator.SetLayerWeight(1, 1);
         animator.SetTrigger(nameHurt);
         
-        bodySwapCooldownCoroutine = StartCoroutine(SetHurtLayerOff());
+        hurtCooldownCoroutine = StartCoroutine(SetHurtLayerOff());
     }
     
     private IEnumerator SetHurtLayerOff()
     {
-        yield return bodySwapCooldownDelay;
+        yield return hurtCooldownDelay;
         animator.SetLayerWeight(1, 0);
 
+    }
+    
+    public void SetAttack()
+    {
+        animator.SetTrigger(nameAttack);
     }
 }

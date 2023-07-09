@@ -17,6 +17,7 @@ public class CharacterController : MonoBehaviour
 
     private float distanceToPlayer;
     private bool canAttack = true;
+    private bool canVisualAttack = true;
     private BoxCollider2D boxCollider;
     private RaycastHit2D hit;
     private Vector3 moveDelta;
@@ -24,6 +25,7 @@ public class CharacterController : MonoBehaviour
     private CharacterAnimationController characterAnimationController;
     private WaitForSeconds bodySwapCooldownDelay;
     private Coroutine attackCooldownCoroutine;
+    private Coroutine attackVisualCoroutine;
     private bool isDie;
     private bool spaceInput;
     private bool mouseInput;
@@ -42,6 +44,20 @@ public class CharacterController : MonoBehaviour
 
         spaceInput = Input.GetKey(KeyCode.Space);
         mouseInput = Input.GetKey(KeyCode.Mouse0);
+
+        if (IsPlayer && mouseInput && canVisualAttack)
+        {
+            characterAnimationController.SetAttack();
+
+            canVisualAttack = false;
+
+            if (attackVisualCoroutine != null)
+            {
+                StopCoroutine(AttackVisualDelay());
+            }
+
+            attackVisualCoroutine = StartCoroutine(AttackVisualDelay());
+        }
     }
 
     private void FixedUpdate()
@@ -136,6 +152,8 @@ public class CharacterController : MonoBehaviour
     private void ApplyDamageTo(CharacterController target)
     {
         if (isDie) return;
+        if (!IsPlayer)
+            characterAnimationController.SetAttack();
         target.ReceiveDamage(Damage);
         canAttack = false;
 
@@ -151,6 +169,12 @@ public class CharacterController : MonoBehaviour
     {
         yield return bodySwapCooldownDelay;
         canAttack = true;
+    }
+    
+    private IEnumerator AttackVisualDelay()
+    {
+        yield return bodySwapCooldownDelay;
+        canVisualAttack = true;
     }
 
     public void ReceiveDamage(float damage)
