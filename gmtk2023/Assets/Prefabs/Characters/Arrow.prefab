@@ -129,7 +129,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Speed: 150
   AttackCooldown: 0.5
-  HP: 4
+  HP: 5
   Damage: 1
   IsPlayer: 0
 --- !u!114 &7358626131636352539
