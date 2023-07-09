@@ -127,9 +127,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fb4f3a86a632924995c1bc3af91f285, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Speed: 150
-  AttackCooldown: 0.5
-  HP: 2
+  Speed: 148.83
+  AttackCooldown: 0.32
+  HP: 3.7
   Damage: 1
   IsPlayer: 0
 --- !u!114 &7609387363277181499

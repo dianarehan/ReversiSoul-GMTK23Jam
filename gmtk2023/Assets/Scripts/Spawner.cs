@@ -14,7 +14,7 @@ public class Spawner : MonoBehaviour
         for (var i = 0; i < maxSpawnedCount; i++)
         {
             InstantiateCharacter();
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(5);
         }
     }
 
