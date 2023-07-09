@@ -10,7 +10,9 @@ public class CharacterController : MonoBehaviour
     public float AttackCooldown = 0.5f;
     public float HP = 4;
     public float Damage = 1;
-
+    public AudioClip attackClip;
+    public AudioClip hurtClip;
+    
     public bool IsPlayer;
 
     public Action OnDie;
@@ -22,6 +24,7 @@ public class CharacterController : MonoBehaviour
     private RaycastHit2D hit;
     private Vector3 moveDelta;
     private Rigidbody2D rigidbody;
+    private AudioSource audioSource;
     private CharacterAnimationController characterAnimationController;
     private WaitForSeconds bodySwapCooldownDelay;
     private Coroutine attackCooldownCoroutine;
@@ -34,6 +37,7 @@ public class CharacterController : MonoBehaviour
     {
         boxCollider = GetComponent<BoxCollider2D>();
         rigidbody = GetComponent<Rigidbody2D>();
+        audioSource = GetComponent<AudioSource>();
         characterAnimationController = GetComponent<CharacterAnimationController>();
         bodySwapCooldownDelay = new WaitForSeconds(AttackCooldown);
     }
@@ -48,6 +52,7 @@ public class CharacterController : MonoBehaviour
         if (IsPlayer && mouseInput && canVisualAttack)
         {
             characterAnimationController.SetAttack();
+            audioSource.PlayOneShot(attackClip);
 
             canVisualAttack = false;
 
@@ -151,7 +156,11 @@ public class CharacterController : MonoBehaviour
     {
         if (isDie) return;
         if (!IsPlayer)
+        {
             characterAnimationController.SetAttack();
+            audioSource.PlayOneShot(attackClip);
+        }
+
         target.ReceiveDamage(Damage);
         canAttack = false;
 
@@ -178,6 +187,7 @@ public class CharacterController : MonoBehaviour
     public void ReceiveDamage(float damage)
     {
         if (isDie) return;
+        audioSource.PlayOneShot(hurtClip);
         HP -= damage;
         characterAnimationController.SetHurt();
 
