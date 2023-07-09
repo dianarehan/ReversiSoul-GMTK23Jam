@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 7609387363277181498}
   - component: {fileID: 7609387363277181499}
   - component: {fileID: 7609387363277181476}
+  - component: {fileID: 2940759951598765165}
   m_Layer: 6
   m_Name: Third
   m_TagString: Untagged
@@ -75,7 +76,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -843044375
-  m_SortingLayer: 1
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: -1535835747, guid: d2bc606f2fe1f6b46ab43c662cf01613, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -126,7 +127,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fb4f3a86a632924995c1bc3af91f285, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Speed: 5
+  Speed: 150
+  AttackCooldown: 0.5
+  HP: 4
+  Damage: 1
   IsPlayer: 0
 --- !u!114 &7609387363277181499
 MonoBehaviour:
@@ -160,3 +164,24 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!50 &2940759951598765165
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7609387363277181478}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 4
