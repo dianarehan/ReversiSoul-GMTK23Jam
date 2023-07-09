@@ -38,7 +38,7 @@ public class CharacterController : MonoBehaviour
 
     private void Update()
     {
-        if (isDie) return;
+        if (isDie || EventManager.instance.IsGameDone) return;
 
         spaceInput = Input.GetKey(KeyCode.Space);
         mouseInput = Input.GetKey(KeyCode.Mouse0);
@@ -46,7 +46,7 @@ public class CharacterController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (isDie) return;
+        if (isDie || EventManager.instance.IsGameDone) return;
 
         if (!IsPlayer)
         {
@@ -66,7 +66,8 @@ public class CharacterController : MonoBehaviour
         moveDelta = new Vector2(x, y);
         moveDelta *= Speed;
 
-        if (moveDelta.magnitude == 0)
+        
+        if (EventManager.instance.IsGameDone || moveDelta.magnitude == 0)
         {
             rigidbody.velocity = Vector2.zero;
             characterAnimationController.SetIsMove(false);
@@ -91,7 +92,7 @@ public class CharacterController : MonoBehaviour
 
     private void Collision(Collision2D collision)
     {
-        if (isDie) return;
+        if (isDie || EventManager.instance.IsGameDone) return;
         var character = collision.gameObject.GetComponent<CharacterController>();
         if (character == null) return;
 

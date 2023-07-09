@@ -7,8 +7,7 @@ public class EventManager : MonoBehaviour
 
     public Action<CharacterController, CharacterController> OnCollision;
     public Action<CharacterController> OnPlayerDie;
-    public Action OnWin;
-    public Action OnLose;
+    public bool IsGameDone;
     
     private void Awake()
     {
